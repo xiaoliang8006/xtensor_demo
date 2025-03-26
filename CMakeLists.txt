@@ -15,7 +15,7 @@ find_package(xtensor CONFIG REQUIRED)
 find_package(xtl CONFIG REQUIRED)
 find_package(Python COMPONENTS Development REQUIRED)
 
-pybind11_add_module(xtensor_example xtensor_example.cpp)
+pybind11_add_module(xtensor_example examples/xtensor_example.cpp)
 
 target_include_directories(xtensor_example PRIVATE "${ENV_ROOT}/xtensor_x64-linux/include")
 target_include_directories(xtensor_example PRIVATE "${ENV_ROOT}/xtl_x64-linux/include")

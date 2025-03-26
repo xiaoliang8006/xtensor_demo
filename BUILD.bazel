@@ -1,0 +1,92 @@
+load("@pybind11_bazel//:build_defs.bzl", "pybind_extension", "pybind_library")
+
+cc_library(
+    name = "python_headers",
+    hdrs = glob(["thirdparty/python3.8/include/**/*.h"]),
+    includes = ["thirdparty/python3.8/include"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "xtl",
+    hdrs = glob(["thirdparty/xtl/include/**/*.hpp"]),
+    includes = ["thirdparty/xtl/include"],
+    visibility = ["//visibility:public"],
+    copts = ["-std=c++17"],  # 指定 C++17 标准
+)
+
+cc_library(
+    name = "xtensor",
+    hdrs = glob(["thirdparty/xtensor/include/**/*.hpp"]),
+    includes = ["thirdparty/xtensor/include"],
+    visibility = ["//visibility:public"],
+    copts = ["-std=c++17"],  # 指定 C++17 标准
+    deps = [
+        ":xtl",
+    ],
+)
+
+cc_library(
+    name = "xtensor-blas",
+    srcs = glob([
+        "thirdparty/xtensor-blas/include/*",
+    ]),
+    hdrs = glob([
+        "thirdparty/xtensor-blas/include/xflens/**/*.tcc",
+        "thirdparty/xtensor-blas/include/xflens/**/*.cxx",
+        "thirdparty/xtensor-blas/include/**/*.h",
+        "thirdparty/xtensor-blas/include/**/*.hpp",
+    ]),
+    includes = ["thirdparty/xtensor-blas/include"],
+    visibility = ["//visibility:public"],
+)
+
+
+pybind_extension(
+    name = "basic",  # This name is not actually created!
+    srcs = ["examples/basic.cpp"],
+    deps = [":python_headers"],
+
+)
+
+# 使用 py_library 包装动态库
+py_library(
+    name = "libbasic",
+    data = [":basic.so"],  # 将动态库作为数据依赖
+)
+
+py_test(
+    name = "basic_test",
+    srcs = ["examples/basic_test.py"],
+    deps = [
+        ":libbasic"
+    ],
+)
+
+
+pybind_extension(
+    name = "xtensor_example",  # This name is not actually created!
+    srcs = ["examples/xtensor_example.cpp"],
+    includes = ["thirdparty/xtensor/include"],
+    deps = [
+        ":python_headers",
+        ":xtensor",
+        ":xtl",
+        ":xtensor-blas",
+    ],
+    copts = ["-std=c++17"],  # 指定 C++17 标准
+)
+
+# 使用 py_library 包装动态库
+py_library(
+    name = "libxtensor_example",
+    data = [":xtensor_example.so"],  # 将动态库作为数据依赖
+)
+
+py_test(
+    name = "xtensor_test",
+    srcs = ["examples/xtensor_test.py"],
+    deps = [
+        ":libxtensor_example"
+    ],
+)
