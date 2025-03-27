@@ -6,4 +6,5 @@
 
 ### bazel ###
 # bazel build //:basic_test && ./bazel-bin/basic_test
-bazel build //:xtensor_test && ./bazel-bin/xtensor_test
+# bazel build //:xtensor_test && ./bazel-bin/xtensor_test
+bazel build //:dataset_parser && ./bazel-bin/dataset_parser

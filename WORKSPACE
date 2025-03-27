@@ -19,22 +19,43 @@ python_configure(name = "local_config_python")
 
 http_archive(
     name = "com_google_protobuf",
-    sha256 = "4fc5ff1b2c339fb86cd3a25f0b5311478ab081e65ad258c6789359cd84d421f8",
-    strip_prefix = "protobuf-26.1",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v26.1.tar.gz"],
+    sha256 = "f66073dee0bc159157b0bd7f502d7d1ee0bc76b3c1eac9836927511bdc4b3fc1",
+    strip_prefix = "protobuf-3.21.9",
+    urls = [
+        "http://localhost:8100/protobuf_v3.21.9.zip",
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v3.21.9.zip",
+        "https://github.com/protocolbuffers/protobuf/archive/v3.21.9.zip",
+    ],
 )
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 protobuf_deps()
 
-new_local_repository(
-    name = "custom_python",
-    path = "/opt/aurora/python38",
-    build_file_content = """
-      cc_library(
-          name = "python_headers",
-          hdrs = glob(["include/python3.8/*.h", "include/python3.8/**/*.h"]),
-          includes = ["include/python3.8"],
-          visibility = ["//visibility:public"],
-      )
-    """,
+http_archive(
+    name = "rules_cc",
+    sha256 = "cf3b76a90c86c0554c5b10f4b160f05af71d252026b71362c4674e2fb9936cf9",
+    strip_prefix = "rules_cc-01d4a48911d5e7591ecb1c06d3b8af47fe872371",
+    urls = [
+        "http://localhost:8100/rules_cc_01d4a48911d5e7591ecb1c06d3b8af47fe872371.zip",
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_cc/archive/01d4a48911d5e7591ecb1c06d3b8af47fe872371.zip",
+        "https://github.com/bazelbuild/rules_cc/archive/01d4a48911d5e7591ecb1c06d3b8af47fe872371.zip",
+    ],
 )
+
+http_archive(
+    name = "rules_proto",
+    sha256 = "2490dca4f249b8a9a3ab07bd1ba6eca085aaf8e45a734af92aad0c42d9dc7aaf",
+    strip_prefix = "rules_proto-218ffa7dfa5408492dc86c01ee637614f8695c45",
+    url = "https://mirrors.tencent.com/github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
+)
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+rules_proto_dependencies()
+rules_proto_toolchains()
+
+http_archive(
+    name = "rules_python",
+    sha256 = "ca77768989a7f311186a29747e3e95c936a41dffac779aff6b443db22290d913",
+    strip_prefix = "rules_python-0.36.0",
+    url = "https://github.com/bazel-contrib/rules_python/releases/download/0.36.0/rules_python-0.36.0.tar.gz",
+)
+load("@rules_python//python:repositories.bzl", "py_repositories")
+py_repositories()

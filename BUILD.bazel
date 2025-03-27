@@ -1,4 +1,6 @@
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension", "pybind_library")
+load("@rules_cc//cc:defs.bzl", "cc_proto_library") 
+load("@rules_proto//proto:defs.bzl", "proto_library")
 
 cc_library(
     name = "python_headers",
@@ -49,17 +51,11 @@ pybind_extension(
 
 )
 
-# 使用 py_library 包装动态库
-py_library(
-    name = "libbasic",
-    data = [":basic.so"],  # 将动态库作为数据依赖
-)
-
 py_test(
     name = "basic_test",
     srcs = ["examples/basic_test.py"],
-    deps = [
-        ":libbasic"
+    data = [
+        ":basic.so"
     ],
 )
 
@@ -88,5 +84,25 @@ py_test(
     srcs = ["examples/xtensor_test.py"],
     deps = [
         ":libxtensor_example"
+    ],
+)
+
+proto_library(
+    name = "person_proto",
+    srcs = ["examples/person.proto"],
+    visibility = ["//visibility:public"],
+)
+
+cc_proto_library(
+    name = "person_cc_proto",
+    deps = [":person_proto"],
+    visibility = ["//visibility:public"],
+)
+
+cc_binary(
+    name = "dataset_parser",
+    srcs = ["examples/dataset_parser.cc"],
+    deps = [
+        ":person_cc_proto",
     ],
 )

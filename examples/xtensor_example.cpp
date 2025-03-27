@@ -37,7 +37,7 @@ py::array_t<double> xtensor_to_numpy(const xt::xtensor<double, 2>& arr) {
 
 // 定义Python模块
 PYBIND11_MODULE(xtensor_example, m) {
-    m.def("matrix_multiply", &matrix_multiply, "Multiply two matrices using xtensor");
+    m.doc() = "Multiply two matrices using xtensor";
     
     // 为了方便，我们也可以直接暴露一个函数，接受NumPy数组并返回NumPy数组
     m.def("matrix_multiply_np", [](const py::array_t<double>& a, const py::array_t<double>& b) {
